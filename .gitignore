@@ -169,3 +169,7 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+
+/abau_proj/asp_data/
+/data/docs/
