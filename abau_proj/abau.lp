@@ -36,6 +36,9 @@
     s_mod(Modalidad),
     card(Curso, Modalidad, opcion, Cardinalidad).
 
+% No se puede elegir una asignatura de opción (2.b) si ya se eligió como obligatoria (2.a)
+:- s_opcion(Curso, Asig), s_oblig(Curso, Asig).
+
 %%%%%%% (3) OPTATIVA %%%%%%%
 % Hay una oferta de asignaturas optativas que pueden ser incluso de otras modalidades.
 % Son ESPECÍFICAS DEL CURSO (primero/segundo) y no de la modalidad en particular.
@@ -87,13 +90,8 @@ s(Curso, optativa, Asig) :- s_optativa(Curso, Asig).
 % dependencias de segundo con primero
 % No puedes cursar la 2 si no has cursado la 1
 % :- dependencia(A2, A1), s(curso2, _, A2), not s(curso1, _, A1).
-
+% COMPROBAR ESTA REGLA
 :- s(curso2, _, A2), dependencia(A2, _), {s(curso1, _, A1): s(curso1, _, A1), dependencia(A2, A1)} > 1.
-
-
-% moverlo a otro fichero
-curso(curso1). curso(curso2).
-modalidad(ciencia).
 
 % % weights.lp
 % weight(informatica, "bioloxia", 0).
@@ -117,10 +115,9 @@ modalidad(ciencia).
 % weight(informatica, "movementos_culturais_e_artisticos", 0).
 % weight(informatica, "debuxo_tecnico_aplicado_as_artes_plasticas_e_ao_deseño", 0).
 
-
 { s_mod(M) : modalidad(M) } = 1.
 
-% #maximize{ Coef*O,Grado,Asig : orden(O,Grado), s(_, Asig), weight(Grado,Asig,Coef) }.
+#maximize{ Coef*O,  Grado,Asig : orden(O,Grado), s(_, _, Asig), weight(Grado,Asig,Coef) }.
 
 #show s/3.
 #show s_mod/1.
