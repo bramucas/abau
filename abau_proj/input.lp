@@ -2,5 +2,5 @@
 % orden(N, Grado)
 % Se maximiza (N*Coeficiente de la asignatura para el grado)
 orden(3, "enxeñaria informatica").
-orden(2, "fisica").
-orden(1, "veterinaria").
+orden(2, "veterinaria").
+orden(1, "física").

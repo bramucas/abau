@@ -90,8 +90,9 @@ s(Curso, optativa, Asig) :- s_optativa(Curso, Asig).
 % dependencias de segundo con primero
 % No puedes cursar la 2 si no has cursado la 1
 % :- dependencia(A2, A1), s(curso2, _, A2), not s(curso1, _, A1).
-% COMPROBAR ESTA REGLA
-:- s(curso2, _, A2), dependencia(A2, _), {s(curso1, _, A1): s(curso1, _, A1), dependencia(A2, A1)} > 1.
+:- s(curso2, _, A2), dependencia(A2, _), {s(curso1, _, A1): s(curso1, _, A1), dependencia(A2, A1)} < 1.
+% :- s(curso2, _, A2), dependencia(A2, _), not s(curso1, _, A1) : dependencia(A2, A1).
+
 
 % % weights.lp
 % weight(informatica, "bioloxia", 0).
