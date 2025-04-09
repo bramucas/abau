@@ -118,7 +118,7 @@ s(Curso, optativa, Asig) :- s_optativa(Curso, Asig).
 
 { s_mod(M) : modalidad(M) } = 1.
 
-#maximize{ Coef*O,  Grado,Asig : orden(O,Grado), s(_, _, Asig), weight(Grado,Asig,Coef) }.
+#maximize{ Coef@O,  Grado,Asig : orden(O,Grado), s(_, _, Asig), weight(Grado,Asig,Coef) }.
 
 #show s/3.
 #show s_mod/1.
