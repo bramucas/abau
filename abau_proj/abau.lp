@@ -1,3 +1,4 @@
+
 %%%%%%% (2.A) ESPECIFICA MODALIDAD (OBLIGATORIAS) %%%%%%%
 % card(C, M, T, Card) En el curso C de la modadlidad M, hay que escoger Card asignaturas del tipo T
 % oblig(C, M, A)   La asignatura A, es de tipo obligatoria en el curso C de la modalidad M

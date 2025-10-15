@@ -13,3 +13,7 @@ Elixe as túas materias de Bacharelato para acadar a carreira que desexas!
 │   ├── docs                          # Data in xmls
 │   └── generate_ponderations.ipynb   # Encodes the data as ASP facts.
 ```
+
+```
+clinguin client-server --domain-files {abau.lp,order_choice.lp,asp_data/database.lp} --ui-files ui-*
+```
