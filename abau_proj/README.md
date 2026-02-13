@@ -1,7 +1,7 @@
 ## Uso
 
 ```
-clingo 0 abau.lp asp_data/database.lp input.lp
+clingo 0 abau.lp asp_data/database.lp input.lp optimize.lp
 ```
 
 ## Tareas
