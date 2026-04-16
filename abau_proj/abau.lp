@@ -76,6 +76,8 @@ s(Curso, oblig, Asig) :- s_oblig(Curso, Asig).
 s(Curso, opcion, Asig) :- s_opcion(Curso, Asig).
 s(Curso, optativa, Asig) :- s_optativa(Curso, Asig).
 
+s(Curso, Asig) :- s(Curso, _, Asig).
+
 %%%%%%%% DEPENDENCIAS %%%%%%%%%%%%
 
 % dependencias obligatorias de segundo con primero
@@ -95,30 +97,10 @@ s(Curso, optativa, Asig) :- s_optativa(Curso, Asig).
 % :- s(curso2, _, A2), dependencia(A2, _), not s(curso1, _, A1) : dependencia(A2, A1).
 
 
-% % weights.lp
-% weight(informatica, "bioloxia", 0).
-% weight(informatica, "debuxo_tecnico_ii", 2).
-% weight(informatica, "fisica", 2).
-% weight(informatica, "matematicas_ii", 2).
-% weight(informatica, "matematicas_aplicadas_as_ciencias_sociais_ii", 1).
-% weight(informatica, "quimica", 2).
-% weight(informatica, "xeografia", 0).
-% weight(informatica, "xeoloxia_e_ciencias_ambientais", 0).
-% weight(informatica, "2ª_lingua_estranxeira_ii", 0).
-% weight(informatica, "ciencias_xerais", 0).
-% weight(informatica, "tecnoloxia_e_enxeñaria_ii", 2).
-% weight(informatica, "debuxo_artistico_ii", 0).
-% weight(informatica, "debuxo_tecnico_aplicado_as_artes_plasticas_e_ao_deseño_ii", 0).
-% weight(informatica, "tecnicas_de_expresion_grafico-plastica", 0).
-% weight(informatica, "coro_e_tecnica_vocal_ii", 0).
-% weight(informatica, "analise_musical_ii", 0).
-% weight(informatica, "historia_da_musica_e_da_danza", 0).
-% weight(informatica, "literatura_dramatica", 0).
-% weight(informatica, "movementos_culturais_e_artisticos", 0).
-% weight(informatica, "debuxo_tecnico_aplicado_as_artes_plasticas_e_ao_deseño", 0).
-
 { s_mod(M) : modalidad(M) } = 1.
 
 
-#show s/3.
-#show s_mod/1.
+% #show s/3.
+% #show s_mod/1.
+
+#show s/2.
