@@ -22,3 +22,37 @@ Elixe as túas materias de Bacharelato para acadar a carreira que desexas!
 ```
 clinguin client-server --domain-files {abau.lp,order_choice.lp,asp_data/database.lp} --ui-files ui-*
 ```
+
+
+
+## Checking the numbers
+
+Dejamos descomentada la modalidad que queramos contar, en el fichero `asp_data/database.lp`.
+Por ejemplo, para contar los bachilleratos de artes plásticas:
+```
+# asp_data/database.lp
+ ( ... )
+
+modalidad("artes_plasticas").      
+% modalidad("humanidades").
+% modalidad("artes_musica").
+% modalidad("ciencias").  % ciencia o ciencias?
+% modalidad("general")    % Nunca descomentar esta modaliad, no funciona.
+
+ ( ... )
+```
+
+Si dejamos varias sin comentar estaremos contando el cardinal de la unión.
+*Nota:* ya hemos comprobado que son disjuntos.
+
+Hay que estar en el directorio `abau_proj`
+```
+cd abau_proj
+```
+
+Para contar, ejecutar:
+```
+clingo 0 abau.lp asp_data/database.lp --project
+```
+
+Basta con descomentar otra modadlidad y volver a ejecutar para comprobar otras cuentas.
