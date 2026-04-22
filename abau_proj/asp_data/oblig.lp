@@ -4,7 +4,7 @@
 % OJO: la cardinalidad de las obligatorias siempre es 1.
 %       esto se puede aprovechar para mejorar los tiempos.
 
-%%% "ciencias"S %%%%
+%%%% CIENCIAS %%%%
 card(curso1, "ciencias", oblig, 1).
 oblig(curso1, "ciencias", "matematicas_i").
 
@@ -12,7 +12,7 @@ card(curso2, "ciencias", oblig, 1).
 oblig(curso2, "ciencias", "matematicas_ii").
 oblig(curso2, "ciencias", "matematicas_aplicadas_as_ciencias_sociais_ii").
 
-%%%%%% ARTES PLASTICAS %%%%%
+%%%%% ARTES PLASTICAS %%%%%
 
 card(curso1, "artes_plasticas", oblig, 1).
 oblig(curso1, "artes_plasticas", "debuxo_artistico_i").
@@ -20,7 +20,7 @@ oblig(curso1, "artes_plasticas", "debuxo_artistico_i").
 card(curso2, "artes_plasticas", oblig, 1).
 oblig(curso2, "artes_plasticas", "debuxo_artistico_ii").
 
-%%%ARTES MUSICA %%%%%
+%%%% ARTES MUSICA %%%%%
 
 card(curso1, "artes_musica", oblig, 1).
 oblig(curso1, "artes_musica", "analise_musical_i").
@@ -30,7 +30,7 @@ card(curso2, "artes_musica", oblig, 1).
 oblig(curso2, "artes_musica", "analise_musical_ii").
 oblig(curso2, "artes_musica", "artes_escenicas_ii").
 
-%% HUMANIDADES %%%%%
+%%%% HUMANIDADES %%%%%
 
 card(curso1, "humanidades", oblig, 1).
 oblig(curso1, "humanidades", "latin_i").
@@ -40,3 +40,9 @@ card(curso2, "humanidades", oblig, 1).
 oblig(curso2, "humanidades", "latin_ii").
 oblig(curso2, "humanidades", "matematicas_aplicadas_as_ciencias_sociais_ii").
 
+%%%% GENERAL %%%%
+card(curso1, "general", oblig, 1).
+oblig(curso1, "general", "matematicas_generales").
+
+card(curso2, "general", oblig, 1).
+oblig(curso2, "general", "ciencias_generales").

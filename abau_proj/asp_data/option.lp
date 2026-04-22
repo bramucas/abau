@@ -62,3 +62,15 @@ opcion(curso2, "artes_musica", "artes_escenicas_ii").
 opcion(curso2, "artes_musica", "coro_e_tecnica_vocal_ii").
 opcion(curso2, "artes_musica", "historia_da_musica_e_da_danza").
 opcion(curso2, "artes_musica", "literatura_dramatica").
+
+%%%%%%%%%%% GENERAL %%%%%%%%%%%%%
+
+card(curso1, "general", opcion, 2).
+opcion(curso1, "general", "emprendimiento").
+
+card(curso2, "general", opcion, 2).
+opcion(curso2, "general", "movimientos_culturales").
+
+% Adicionalmente, cualquier asignatura de opción u obligatoria de cualquier modalidad puede ser opción en general.
+opcion(Curso, "general", Asignatura) :- opcion(Curso, _, Asignatura).
+opcion(Curso, "general", Asignatura) :- oblig(Curso, _, Asignatura).

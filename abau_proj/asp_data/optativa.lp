@@ -13,11 +13,6 @@
 optativa(curso1, "2ª_lingua_estranxeira_i").
 optativa(curso2, "2ª_lingua_estranxeira_ii").
 
-optativa(curso1, "mat_general").
-optativa(curso1, "eeae").
-optativa(curso2, "ciencias_general").
-optativa(curso2, "movimientos_culturales").
-
 % Las siguientes asignaturas de segundo que ponderan 0 para todas las carreras.
 % optativa(curso2, "metodos_estatisticos").
 % optativa(curso2, "psicoloxia").

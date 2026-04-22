@@ -11,7 +11,7 @@ modalidad("artes_plasticas").
 % modalidad("humanidades").
 % modalidad("artes_musica").
 % modalidad("ciencias").  % ciencia o ciencias?
-% modalidad("general")    % Nunca descomentar esta modalidad, no funciona.
+% modalidad("general").    % Nunca descomentar esta modalidad, no funciona.
 
 curso(curso1).
 curso(curso2).
