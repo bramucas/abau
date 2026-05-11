@@ -45,4 +45,4 @@ card(curso1, "general", oblig, 1).
 oblig(curso1, "general", "matematicas_generales").
 
 card(curso2, "general", oblig, 1).
-oblig(curso2, "general", "ciencias_generales").
+oblig(curso2, "general", "ciencias_xerais").
