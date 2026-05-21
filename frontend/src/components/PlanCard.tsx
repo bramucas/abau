@@ -1,25 +1,30 @@
-import { Plan, SubjectEntry } from "../api/client";
+import { DegreeScore, Plan, SubjectEntry } from "../api/client";
 
 function formatSubject(s: string): string {
   return s.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-export default function PlanCard({ modality, subjects, score }: Plan) {
+export default function PlanCard({ modality, subjects, degree_scores }: Plan) {
   const byCourse = (course: "curso1" | "curso2") =>
     subjects.filter((s) => s.course === course);
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-      <div className="flex items-center justify-between mb-5">
+      <div className="flex flex-wrap items-center gap-3 mb-5">
         <span className="px-3 py-1 bg-indigo-100 text-indigo-800 text-sm font-semibold rounded-full capitalize">
           {modality}
         </span>
-        {score !== null && (
-          <span className="text-sm text-gray-500">
-            Puntuación ABAU estimada:{" "}
-            <span className="font-bold text-indigo-700">{score}</span>
+        {degree_scores.map((ds: DegreeScore) => (
+          <span
+            key={ds.degree}
+            className="flex items-center gap-1.5 text-xs text-gray-500"
+          >
+            <span className="capitalize">{ds.degree}</span>
+            <span className="font-bold text-indigo-700">
+              {ds.max_score}/14
+            </span>
           </span>
-        )}
+        ))}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
