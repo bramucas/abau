@@ -1,37 +1,12 @@
 import { Plan, SubjectEntry } from "../api/client";
 
-const TYPE_LABELS: Record<SubjectEntry["type"], string> = {
-  oblig: "oblig.",
-  opcion: "opción",
-  optativa: "optativa",
-};
-
-const TYPE_COLORS: Record<SubjectEntry["type"], string> = {
-  oblig: "border border-blue-300 text-blue-500",
-  opcion: "border border-emerald-300 text-emerald-600",
-  optativa: "border border-amber-300 text-amber-600",
-};
-
-const TYPE_ORDER: Record<SubjectEntry["type"], number> = {
-  oblig: 0,
-  opcion: 1,
-  optativa: 2,
-};
-
 function formatSubject(s: string): string {
-  return s
-    .replace(/_/g, " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+  return s.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 export default function PlanCard({ modality, subjects, score }: Plan) {
-  const curso1 = subjects
-    .filter((s) => s.course === "curso1")
-    .sort((a, b) => TYPE_ORDER[a.type] - TYPE_ORDER[b.type]);
-
-  const curso2 = subjects
-    .filter((s) => s.course === "curso2")
-    .sort((a, b) => TYPE_ORDER[a.type] - TYPE_ORDER[b.type]);
+  const byCourse = (course: "curso1" | "curso2") =>
+    subjects.filter((s) => s.course === course);
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
@@ -47,44 +22,36 @@ export default function PlanCard({ modality, subjects, score }: Plan) {
         )}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {(
-          [
-            ["1º Bacharelato", curso1],
-            ["2º Bacharelato", curso2],
-          ] as [string, SubjectEntry[]][]
-        ).map(([label, subjs]) => (
-          <div key={label}>
-            <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
-              {label}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+        {(["curso1", "curso2"] as const).map((course) => (
+          <div key={course}>
+            <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
+              {course === "curso1" ? "1º Bacharelato" : "2º Bacharelato"}
             </h4>
-            <div className="space-y-2">
-              {subjs.map((s, i) => {
+            <div className="space-y-3">
+              {byCourse(course).map((s, i) => {
                 const nonZeroWeights = s.weights.filter((w) => w.weight > 0);
                 return (
-                  <div key={i} className="flex flex-col gap-1">
+                  <div key={i} className="flex flex-col gap-0.5">
                     <span className="text-sm font-semibold text-gray-800">
                       {formatSubject(s.subject)}
                     </span>
-                    <div className="flex flex-wrap items-center gap-1">
-                      <span
-                        className={`text-xs px-1.5 py-0.5 rounded font-medium ${TYPE_COLORS[s.type]}`}
-                      >
-                        {TYPE_LABELS[s.type]}
-                      </span>
-                      {nonZeroWeights.map((w) => (
-                        <span
-                          key={w.degree}
-                          className={`text-xs px-1.5 py-0.5 rounded font-semibold ${
-                            w.weight === 2
-                              ? "bg-violet-100 text-violet-700"
-                              : "bg-orange-100 text-orange-700"
-                          }`}
-                        >
-                          {w.degree} ×{w.weight}
-                        </span>
-                      ))}
-                    </div>
+                    {nonZeroWeights.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {nonZeroWeights.map((w) => (
+                          <span
+                            key={w.degree}
+                            className={`text-xs px-1.5 py-0.5 rounded font-semibold ${
+                              w.weight === 2
+                                ? "bg-violet-100 text-violet-700"
+                                : "bg-orange-100 text-orange-700"
+                            }`}
+                          >
+                            {w.degree} ×{w.weight}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 );
               })}
