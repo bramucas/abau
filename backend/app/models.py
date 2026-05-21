@@ -17,10 +17,16 @@ class SolveRequest(BaseModel):
     constraints: list[Constraint] = Field(default_factory=list)
 
 
+class WeightEntry(BaseModel):
+    degree: str
+    weight: int
+
+
 class SubjectEntry(BaseModel):
     course: Literal["curso1", "curso2"]
     type: Literal["oblig", "opcion", "optativa"]
     subject: str
+    weights: list[WeightEntry] = []
 
 
 class Plan(BaseModel):

@@ -19,10 +19,16 @@ export interface SolveRequest {
   constraints: Constraint[];
 }
 
+export interface WeightEntry {
+  degree: string;
+  weight: number;
+}
+
 export interface SubjectEntry {
   course: "curso1" | "curso2";
   type: "oblig" | "opcion" | "optativa";
   subject: string;
+  weights: WeightEntry[];
 }
 
 export interface Plan {
