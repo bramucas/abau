@@ -1,15 +1,15 @@
 import { Plan, SubjectEntry } from "../api/client";
 
 const TYPE_LABELS: Record<SubjectEntry["type"], string> = {
-  oblig: "Obrig.",
-  opcion: "Opción",
-  optativa: "Optativa",
+  oblig: "oblig.",
+  opcion: "opción",
+  optativa: "optativa",
 };
 
 const TYPE_COLORS: Record<SubjectEntry["type"], string> = {
-  oblig: "bg-blue-100 text-blue-700",
-  opcion: "bg-emerald-100 text-emerald-700",
-  optativa: "bg-amber-100 text-amber-700",
+  oblig: "border border-blue-300 text-blue-500",
+  opcion: "border border-emerald-300 text-emerald-600",
+  optativa: "border border-amber-300 text-amber-600",
 };
 
 const TYPE_ORDER: Record<SubjectEntry["type"], number> = {
@@ -59,20 +59,35 @@ export default function PlanCard({ modality, subjects, score }: Plan) {
               {label}
             </h4>
             <div className="space-y-2">
-              {subjs.map((s, i) => (
-                <div key={i} className="flex items-start gap-2">
-                  <span
-                    className={`mt-0.5 shrink-0 text-xs px-1.5 py-0.5 rounded font-medium ${
-                      TYPE_COLORS[s.type]
-                    }`}
-                  >
-                    {TYPE_LABELS[s.type]}
-                  </span>
-                  <span className="text-sm text-gray-700">
-                    {formatSubject(s.subject)}
-                  </span>
-                </div>
-              ))}
+              {subjs.map((s, i) => {
+                const nonZeroWeights = s.weights.filter((w) => w.weight > 0);
+                return (
+                  <div key={i} className="flex flex-col gap-1">
+                    <span className="text-sm font-semibold text-gray-800">
+                      {formatSubject(s.subject)}
+                    </span>
+                    <div className="flex flex-wrap items-center gap-1">
+                      <span
+                        className={`text-xs px-1.5 py-0.5 rounded font-medium ${TYPE_COLORS[s.type]}`}
+                      >
+                        {TYPE_LABELS[s.type]}
+                      </span>
+                      {nonZeroWeights.map((w) => (
+                        <span
+                          key={w.degree}
+                          className={`text-xs px-1.5 py-0.5 rounded font-semibold ${
+                            w.weight === 2
+                              ? "bg-violet-100 text-violet-700"
+                              : "bg-orange-100 text-orange-700"
+                          }`}
+                        >
+                          {w.degree} ×{w.weight}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         ))}

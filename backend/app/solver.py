@@ -1,6 +1,6 @@
 import clingo
 from app.config import settings
-from app.models import Constraint, DegreePreference, Plan, SolveRequest, SolveResponse, SubjectEntry
+from app.models import Constraint, DegreePreference, Plan, SolveRequest, SolveResponse, SubjectEntry, WeightEntry
 
 MAX_OPTIMAL_MODELS = 5
 
@@ -29,7 +29,8 @@ def _build_instance_lp(
 
 def _parse_plan(atoms: list[clingo.Symbol], score: int | None = None) -> Plan:
     modality: str = ""
-    subjects: list[SubjectEntry] = []
+    raw_subjects: list[tuple[str, str, str]] = []
+    raw_weights: dict[str, list[WeightEntry]] = {}
 
     for atom in atoms:
         if atom.name == "s_mod" and len(atom.arguments) == 1:
@@ -39,7 +40,18 @@ def _parse_plan(atoms: list[clingo.Symbol], score: int | None = None) -> Plan:
             course = str(atom.arguments[0])
             kind = str(atom.arguments[1])
             subject = str(atom.arguments[2]).strip('"')
-            subjects.append(SubjectEntry(course=course, type=kind, subject=subject))
+            raw_subjects.append((course, kind, subject))
+
+        elif atom.name == "selected_weight" and len(atom.arguments) == 3:
+            degree = str(atom.arguments[0]).strip('"')
+            subject = str(atom.arguments[1]).strip('"')
+            w = atom.arguments[2].number
+            raw_weights.setdefault(subject, []).append(WeightEntry(degree=degree, weight=w))
+
+    subjects = [
+        SubjectEntry(course=course, type=kind, subject=subject, weights=raw_weights.get(subject, []))
+        for course, kind, subject in raw_subjects
+    ]
 
     return Plan(modality=modality, subjects=subjects, score=score)
 
