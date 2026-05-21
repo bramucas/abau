@@ -1,6 +1,6 @@
 import clingo
 from app.config import settings
-from app.models import Constraint, DegreePreference, Plan, SolveRequest, SolveResponse, SubjectEntry, WeightEntry
+from app.models import Constraint, DegreePreference, DegreeScore, Plan, SolveRequest, SolveResponse, SubjectEntry, WeightEntry
 
 MAX_OPTIMAL_MODELS = 5
 
@@ -53,7 +53,21 @@ def _parse_plan(atoms: list[clingo.Symbol], score: int | None = None) -> Plan:
         for course, kind, subject in raw_subjects
     ]
 
-    return Plan(modality=modality, subjects=subjects, score=score)
+    degree_totals: dict[str, int] = {}
+    for weights in raw_weights.values():
+        for w in weights:
+            degree_totals[w.degree] = degree_totals.get(w.degree, 0) + w.weight
+
+    degree_scores = sorted(
+        [
+            DegreeScore(degree=d, max_score=10 + min(total, 4))
+            for d, total in degree_totals.items()
+        ],
+        key=lambda x: x.max_score,
+        reverse=True,
+    )
+
+    return Plan(modality=modality, subjects=subjects, score=score, degree_scores=degree_scores)
 
 
 def solve(request: SolveRequest) -> SolveResponse | None:

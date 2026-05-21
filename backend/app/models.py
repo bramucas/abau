@@ -22,6 +22,11 @@ class WeightEntry(BaseModel):
     weight: int
 
 
+class DegreeScore(BaseModel):
+    degree: str
+    max_score: float
+
+
 class SubjectEntry(BaseModel):
     course: Literal["curso1", "curso2"]
     type: Literal["oblig", "opcion", "optativa"]
@@ -33,6 +38,7 @@ class Plan(BaseModel):
     modality: str
     subjects: list[SubjectEntry]
     score: int | None = None
+    degree_scores: list[DegreeScore] = []
 
 
 class SolveResponse(BaseModel):

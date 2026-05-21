@@ -52,11 +52,7 @@ export default function ResultsPage({ response, onBack }: Props) {
           </div>
         )}
 
-        <PlanCard
-          modality={plans[active].modality}
-          subjects={plans[active].subjects}
-          score={plans[active].score}
-        />
+        <PlanCard {...plans[active]} />
       </div>
     </div>
   );

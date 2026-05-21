@@ -31,10 +31,16 @@ export interface SubjectEntry {
   weights: WeightEntry[];
 }
 
+export interface DegreeScore {
+  degree: string;
+  max_score: number;
+}
+
 export interface Plan {
   modality: string;
   subjects: SubjectEntry[];
   score: number | null;
+  degree_scores: DegreeScore[];
 }
 
 export interface SolveResponse {
