@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { ChevronDown, ChevronRight, Plus, X } from "lucide-react";
-import { Constraint } from "../api/client";
+import { Constraint, SubjectOption } from "../api/client";
 import SearchInput from "./SearchInput";
 
 interface Props {
   modalities: string[];
-  subjects: string[];
+  subjects: SubjectOption[];
   constraints: Constraint[];
   onChange: (constraints: Constraint[]) => void;
 }
@@ -17,12 +17,21 @@ const CONSTRAINT_LABELS: Record<Constraint["type"], string> = {
   exclude_subject: "Excluír materia",
 };
 
+const COURSE_LABEL: Record<SubjectOption["course"], string> = {
+  curso1: "1º bach.",
+  curso2: "2º bach.",
+};
+
 export default function ConstraintPanel({
   modalities,
   subjects,
   constraints,
   onChange,
 }: Props) {
+  const subjectOptions = subjects.map((s) => ({
+    value: s.subject,
+    hint: COURSE_LABEL[s.course],
+  }));
   const [open, setOpen] = useState(false);
   const [type, setType] = useState<Constraint["type"]>("force_modality");
   const [value, setValue] = useState("");
@@ -88,7 +97,7 @@ export default function ConstraintPanel({
               </select>
             ) : (
               <SearchInput
-                options={subjects}
+                options={subjectOptions}
                 value={value}
                 onChange={setValue}
                 placeholder="Nome interno da materia..."

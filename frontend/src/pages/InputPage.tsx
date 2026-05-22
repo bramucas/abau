@@ -6,6 +6,7 @@ import {
   fetchSubjects,
   postSolve,
   SolveResponse,
+  SubjectOption,
 } from "../api/client";
 import ConstraintPanel from "../components/ConstraintPanel";
 import DegreeRanker from "../components/DegreeRanker";
@@ -17,7 +18,7 @@ interface Props {
 export default function InputPage({ onSolve }: Props) {
   const [degrees, setDegrees] = useState<string[]>([]);
   const [modalities, setModalities] = useState<string[]>([]);
-  const [subjects, setSubjects] = useState<string[]>([]);
+  const [subjects, setSubjects] = useState<SubjectOption[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
   const [constraints, setConstraints] = useState<Constraint[]>([]);
   const [loading, setLoading] = useState(false);

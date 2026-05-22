@@ -1,7 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 
+interface Option {
+  value: string;
+  hint?: string;
+}
+
 interface Props {
-  options: string[];
+  options: Option[];
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
@@ -28,7 +33,7 @@ export default function SearchInput({
   }, []);
 
   const filtered = options.filter((o) =>
-    o.toLowerCase().includes(value.toLowerCase())
+    o.value.toLowerCase().includes(value.toLowerCase())
   );
 
   return (
@@ -47,15 +52,16 @@ export default function SearchInput({
         <div className="absolute z-20 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-auto">
           {filtered.map((o) => (
             <button
-              key={o}
+              key={o.value}
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => {
-                onChange(o);
+                onChange(o.value);
                 setOpen(false);
               }}
-              className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
+              className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors flex items-baseline gap-2"
             >
-              {o}
+              <span>{o.value}</span>
+              {o.hint && <span className="text-xs text-gray-400 font-normal">{o.hint}</span>}
             </button>
           ))}
         </div>
