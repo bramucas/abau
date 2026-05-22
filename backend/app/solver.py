@@ -1,6 +1,9 @@
+import logging
 import clingo
 from app.config import settings
 from app.models import Constraint, DegreePreference, DegreeScore, Plan, SolveRequest, SolveResponse, SubjectEntry, WeightEntry
+
+logger = logging.getLogger(__name__)
 
 MAX_OPTIMAL_MODELS = 5
 
@@ -79,8 +82,10 @@ def solve(request: SolveRequest) -> SolveResponse | None:
     ctl.load(str(asp_dir / "asp_data" / "database.lp"))
 
     instance_lp = _build_instance_lp(request.preferences, request.constraints)
+    logger.info("instance_lp:\n%s", instance_lp)
     ctl.add("base", [], instance_lp)
     ctl.ground([("base", [])])
+    logger.info("grounding done, solving...")
 
     candidates: list[tuple[list[int], list[clingo.Symbol]]] = []
 

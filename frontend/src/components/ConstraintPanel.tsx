@@ -30,7 +30,9 @@ export default function ConstraintPanel({
   const isModalityType = type === "force_modality" || type === "exclude_modality";
 
   const add = () => {
+    console.log("[ConstraintPanel] add called, value:", value, "type:", type);
     if (!value) return;
+    console.log("[ConstraintPanel] adding constraint:", { type, value });
     onChange([...constraints, { type, value }]);
     setValue("");
   };

@@ -29,6 +29,10 @@ export default function InputPage({ onSolve }: Props) {
     fetchSubjects().then(setSubjects).catch(console.error);
   }, []);
 
+  useEffect(() => {
+    console.log("[InputPage] constraints state changed:", constraints);
+  }, [constraints]);
+
   const handleSubmit = async () => {
     if (selected.length === 0) return;
     setLoading(true);
@@ -38,6 +42,7 @@ export default function InputPage({ onSolve }: Props) {
         rank: i + 1,
         degree,
       }));
+      console.log("[InputPage] constraints at submit:", constraints);
       const response = await postSolve({ preferences, constraints });
       onSolve(response);
     } catch (e) {
