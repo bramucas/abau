@@ -9,7 +9,7 @@ router = APIRouter(prefix="/solve", tags=["solve"])
 
 @router.post("/", response_model=SolveResponse)
 async def solve_plan(request: SolveRequest) -> SolveResponse:
-    logger.info("solve request: %s", request.model_dump())
+    logger.debug("solve request: %s", request.model_dump())
     result = solver.solve(request)
     if result is None:
         raise HTTPException(

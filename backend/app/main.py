@@ -1,9 +1,13 @@
 import logging
+import os
 from fastapi import FastAPI
-
-logging.basicConfig(level=logging.INFO)
 from fastapi.middleware.cors import CORSMiddleware
 from app.routers import degrees, subjects, solve
+
+logging.basicConfig(
+    level=getattr(logging, os.getenv("LOG_LEVEL", "INFO").upper(), logging.INFO),
+    format="%(levelname)s:%(name)s:%(message)s",
+)
 
 app = FastAPI(
     title="abau API",

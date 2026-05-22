@@ -82,7 +82,7 @@ def solve(request: SolveRequest) -> SolveResponse | None:
     ctl.load(str(asp_dir / "asp_data" / "database.lp"))
 
     instance_lp = _build_instance_lp(request.preferences, request.constraints)
-    logger.info("instance_lp:\n%s", instance_lp)
+    logger.debug("instance_lp:\n%s", instance_lp)
     ctl.add("base", [], instance_lp)
     ctl.ground([("base", [])])
     logger.info("grounding done, solving...")
