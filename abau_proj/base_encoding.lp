@@ -98,9 +98,3 @@ s(Curso, Asig) :- s(Curso, _, Asig).
 
 
 { s_mod(M) : modalidad(M) } = 1.
-
-
-% #show s/3.
-% #show s_mod/1.
-
-#show s/2.

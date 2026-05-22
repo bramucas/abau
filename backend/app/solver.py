@@ -77,9 +77,7 @@ def solve(request: SolveRequest) -> SolveResponse | None:
     asp_dir = settings.asp_dir
 
     ctl = clingo.Control(["--opt-mode=optN", f"--models={MAX_OPTIMAL_MODELS}"])
-    ctl.load(str(asp_dir / "abau.lp"))
-    ctl.load(str(asp_dir / "optimize.lp"))
-    ctl.load(str(asp_dir / "asp_data" / "database.lp"))
+    ctl.load(str(asp_dir / "abau_no_input.lp"))
 
     instance_lp = _build_instance_lp(request.preferences, request.constraints)
     logger.debug("instance_lp:\n%s", instance_lp)

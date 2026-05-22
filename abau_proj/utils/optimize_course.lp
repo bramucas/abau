@@ -1,0 +1,1 @@
+#maximize{ Coef*O, Grado, Asig : orden(O,Grado), s(curso2, Asig), weight(Grado,Asig,Coef) }.
