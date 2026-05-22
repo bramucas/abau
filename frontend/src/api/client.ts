@@ -64,9 +64,16 @@ export const fetchDegrees = () => apiFetch<string[]>("/api/degrees/");
 export const fetchModalities = () =>
   apiFetch<string[]>("/api/subjects/modalities");
 
+export interface SubjectOption {
+  subject: string;
+  course: "curso1" | "curso2";
+}
+
 export const fetchSubjects = () =>
   apiFetch<Record<string, string[]>>("/api/subjects/").then((grouped) =>
-    [...new Set(Object.values(grouped).flat())].sort()
+    (Object.entries(grouped) as [SubjectOption["course"], string[]][])
+      .flatMap(([course, subjects]) => subjects.map((subject) => ({ subject, course })))
+      .sort((a, b) => a.subject.localeCompare(b.subject))
   );
 
 export const postSolve = (req: SolveRequest) =>
