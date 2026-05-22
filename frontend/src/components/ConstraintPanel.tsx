@@ -30,6 +30,7 @@ export default function ConstraintPanel({
 }: Props) {
   const subjectOptions = subjects.map((s) => ({
     value: s.subject,
+    label: s.subject.replace(/_/g, " "),
     hint: COURSE_LABEL[s.course],
   }));
   const [open, setOpen] = useState(false);
@@ -64,14 +65,14 @@ export default function ConstraintPanel({
 
       {open && (
         <div className="mt-4 space-y-3">
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2">
             <select
               value={type}
               onChange={(e) => {
                 setType(e.target.value as Constraint["type"]);
                 setValue("");
               }}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-indigo-400 bg-white"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-indigo-400 bg-white"
             >
               {(Object.keys(CONSTRAINT_LABELS) as Constraint["type"][]).map(
                 (k) => (
@@ -82,36 +83,38 @@ export default function ConstraintPanel({
               )}
             </select>
 
-            {isModalityType ? (
-              <select
-                value={value}
-                onChange={(e) => setValue(e.target.value)}
-                className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-indigo-400 bg-white"
-              >
-                <option value="">Seleccionar...</option>
-                {modalities.map((m) => (
-                  <option key={m} value={m}>
-                    {m}
-                  </option>
-                ))}
-              </select>
-            ) : (
-              <SearchInput
-                options={subjectOptions}
-                value={value}
-                onChange={setValue}
-                placeholder="Nome interno da materia..."
-                className="flex-1"
-              />
-            )}
+            <div className="flex gap-2">
+              {isModalityType ? (
+                <select
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                  className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-indigo-400 bg-white"
+                >
+                  <option value="">Seleccionar...</option>
+                  {modalities.map((m) => (
+                    <option key={m} value={m}>
+                      {m}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <SearchInput
+                  options={subjectOptions}
+                  value={value}
+                  onChange={setValue}
+                  placeholder="Nome interno da materia..."
+                  className="flex-1"
+                />
+              )}
 
-            <button
-              onClick={add}
-              disabled={!value}
-              className="p-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-200 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
-            >
-              <Plus size={16} />
-            </button>
+              <button
+                onClick={add}
+                disabled={!value}
+                className="p-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-200 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
+              >
+                <Plus size={16} />
+              </button>
+            </div>
           </div>
 
           {constraints.length > 0 && (
