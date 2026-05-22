@@ -76,8 +76,8 @@ def _parse_plan(atoms: list[clingo.Symbol], score: int | None = None) -> Plan:
 def solve(request: SolveRequest) -> SolveResponse | None:
     asp_dir = settings.asp_dir
 
-    ctl = clingo.Control(["--opt-mode=optN", f"--models={MAX_OPTIMAL_MODELS}"])
-    ctl.load(str(asp_dir / "abau_no_input.lp"))
+    ctl = clingo.Control(["--opt-mode=optN", f"--models={MAX_OPTIMAL_MODELS}", "--project=auto"])
+    ctl.load(str(asp_dir / "abau_optimize_2nd_course.lp"))
 
     instance_lp = _build_instance_lp(request.preferences, request.constraints)
     logger.debug("instance_lp:\n%s", instance_lp)
@@ -85,21 +85,22 @@ def solve(request: SolveRequest) -> SolveResponse | None:
     ctl.ground([("base", [])])
     logger.info("grounding done, solving...")
 
-    candidates: list[tuple[list[int], list[clingo.Symbol]]] = []
+    optimal_plans: list[tuple[list[int], list[clingo.Symbol]]] = []
 
     with ctl.solve(yield_=True) as handle:
         for model in handle:
-            candidates.append((list(model.cost), list(model.symbols(atoms=True))))
+            if model.optimality_proven:
+                optimal_plans.append((list(model.cost), list(model.symbols(atoms=True))))
 
-    if not candidates:
+    if not optimal_plans:
+        logger.debug('no valid plan found')
         return None
 
-    best_cost = min(candidates, key=lambda c: c[0])[0]
-    optimal = [(cost, atoms) for cost, atoms in candidates if cost == best_cost]
+    logger.debug(f'optimal plans: {len(optimal_plans)}')
 
     plans = [
         _parse_plan(atoms, score=(-cost[0]) if cost else None)
-        for cost, atoms in optimal
+        for cost, atoms in optimal_plans
     ]
 
     return SolveResponse(plans=plans)
