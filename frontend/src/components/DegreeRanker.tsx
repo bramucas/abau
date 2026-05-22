@@ -61,6 +61,7 @@ export default function DegreeRanker({ degrees, selected, onChange }: Props) {
               setOpen(true);
             }}
             onFocus={() => setOpen(true)}
+            onClick={() => setOpen(true)}
             placeholder="Buscar carreira..."
             className="flex-1 outline-none text-sm text-gray-700 placeholder-gray-400 bg-transparent"
           />
