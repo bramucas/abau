@@ -1,14 +1,16 @@
+import { Fragment } from "react";
 import { Pin } from "lucide-react";
 import { DegreeScore, Plan } from "../api/client";
 
+// bg: Tailwind *-300 (card background)  pin: Tailwind *-700 (icon, high contrast)
 const SUBJECT_COLORS = [
-  { bg: "#fef3c7", accent: "#d97706" },
-  { bg: "#ccfbf1", accent: "#0d9488" },
-  { bg: "#ffe4e6", accent: "#e11d48" },
-  { bg: "#e0f2fe", accent: "#0284c7" },
-  { bg: "#ede9fe", accent: "#7c3aed" },
-  { bg: "#ecfccb", accent: "#65a30d" },
-  { bg: "#ffedd5", accent: "#ea580c" },
+  { bg: "#fca5a5", pin: "#b91c1c" }, // red
+  { bg: "#fcd34d", pin: "#b45309" }, // amber
+  { bg: "#86efac", pin: "#15803d" }, // green
+  { bg: "#5eead4", pin: "#0f766e" }, // teal
+  { bg: "#7dd3fc", pin: "#0369a1" }, // sky
+  { bg: "#c4b5fd", pin: "#6d28d9" }, // violet
+  { bg: "#f9a8d4", pin: "#be185d" }, // pink
 ];
 
 function formatSubject(s: string): string {
@@ -20,18 +22,18 @@ export default function PlanCard({ modality, subjects, degree_scores }: Plan) {
     subjects.filter((s) => s.course === course);
 
   // Assign a color to every curso2 subject
-  const s2ColorMap: Record<string, { bg: string; accent: string }> = {};
+  const s2ColorMap: Record<string, { bg: string; pin: string }> = {};
   subjects
     .filter((s) => s.course === "curso2")
     .forEach((s, i) => { s2ColorMap[s.subject] = SUBJECT_COLORS[i % SUBJECT_COLORS.length]; });
 
-  // Reverse: curso1 subject → accent colors of all curso2 subjects that depend on it
-  const s1AccentsMap: Record<string, string[]> = {};
+  // Reverse: curso1 subject → pin colors of all curso2 subjects that depend on it
+  const s1PinsMap: Record<string, string[]> = {};
   for (const s of subjects) {
     const color = s2ColorMap[s.subject];
     if (color) {
       for (const dep of s.depends_on) {
-        (s1AccentsMap[dep] ??= []).push(color.accent);
+        (s1PinsMap[dep] ??= []).push(color.pin);
       }
     }
   }
@@ -50,67 +52,72 @@ export default function PlanCard({ modality, subjects, degree_scores }: Plan) {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-        {(["curso1", "curso2"] as const).map((course) => (
-          <div key={course}>
-            <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
-              {course === "curso1" ? "1º Bacharelato" : "2º Bacharelato"}
-            </h4>
-            <div className="space-y-2">
-              {byCourse(course).map((s, i) => {
-                const nonZeroWeights = s.weights.filter((w) => w.weight > 0);
-                const pinAccents = s1AccentsMap[s.subject] ?? [];
-                const isPinned = pinAccents.length > 0;
-                const s2Color = s2ColorMap[s.subject];
+      <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+        {/* column headers */}
+        <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+          1º Bacharelato
+        </h4>
+        <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+          2º Bacharelato
+        </h4>
 
-                if (course === "curso2") {
-                  return (
-                    <div
-                      key={i}
-                      className="rounded-xl px-3 py-2 flex flex-col gap-1"
-                      style={{ background: s2Color.bg }}
+        {/* paired rows — one card per course per row */}
+        {byCourse("curso1").map((s1, i) => {
+          const s2 = byCourse("curso2")[i];
+          const pinColors = s1PinsMap[s1.subject] ?? [];
+          const isPinned = pinColors.length > 0;
+          const s2Color = s2 ? s2ColorMap[s2.subject] : undefined;
+          const nonZeroWeights = s2?.weights.filter((w) => w.weight > 0) ?? [];
+
+          return (
+            <Fragment key={i}>
+              {/* curso1 card */}
+              <div className="rounded-xl px-3 py-2 flex flex-col justify-center bg-gray-100 border border-gray-200">
+                <span className="text-sm font-semibold text-gray-800 flex items-center gap-1.5">
+                  {isPinned && (
+                    <span
+                      className="inline-flex items-center justify-center w-5 h-5 rounded-full shrink-0"
+                      style={{ background: "rgba(255,255,255,0.22)", boxShadow: `0 0 0 1.5px ${pinColors[0]}33` }}
                     >
-                      <span className="text-sm font-semibold text-gray-800">
-                        {formatSubject(s.subject)}
-                      </span>
-                      {nonZeroWeights.length > 0 && (
-                        <div className="flex flex-wrap gap-1">
-                          {nonZeroWeights.map((w) => (
-                            <span
-                              key={w.degree}
-                              className={`text-xs px-1.5 py-0.5 rounded font-semibold ${
-                                w.weight === 2
-                                  ? "bg-violet-100 text-violet-700"
-                                  : "bg-orange-100 text-orange-700"
-                              }`}
-                            >
-                              {w.degree} ×{w.weight}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                }
-
-                return (
-                  <div key={i} className="flex flex-col gap-0.5 px-1 py-1">
-                    <span className="text-sm font-semibold text-gray-800">
-                      {isPinned && (
-                        <Pin
-                          size={13}
-                          className="inline-block mr-1 shrink-0"
-                          style={{ color: pinAccents[0] }}
-                        />
-                      )}
-                      {formatSubject(s.subject)}
+                      <Pin size={13} fill="currentColor" style={{ color: pinColors[0] }} />
                     </span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        ))}
+                  )}
+                  {formatSubject(s1.subject)}
+                </span>
+              </div>
+
+              {/* curso2 card */}
+              {s2 ? (
+                <div
+                  className="rounded-xl px-3 py-2 flex flex-col gap-1"
+                  style={{ background: s2Color?.bg }}
+                >
+                  <span className="text-sm font-semibold text-gray-800">
+                    {formatSubject(s2.subject)}
+                  </span>
+                  {nonZeroWeights.length > 0 && (
+                    <div className="flex flex-wrap gap-1">
+                      {nonZeroWeights.map((w) => (
+                        <span
+                          key={w.degree}
+                          className={`text-xs px-1.5 py-0.5 rounded font-semibold ${
+                            w.weight === 2
+                              ? "bg-violet-100 text-violet-700"
+                              : "bg-orange-100 text-orange-700"
+                          }`}
+                        >
+                          {w.degree} ×{w.weight}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div />
+              )}
+            </Fragment>
+          );
+        })}
       </div>
     </div>
   );
