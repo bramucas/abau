@@ -29,6 +29,7 @@ export interface SubjectEntry {
   type: "oblig" | "opcion" | "optativa";
   subject: string;
   weights: WeightEntry[];
+  depends_on: string[];
 }
 
 export interface DegreeScore {

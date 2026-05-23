@@ -34,6 +34,7 @@ def _parse_plan(atoms: list[clingo.Symbol], score: int | None = None) -> Plan:
     modality: str = ""
     raw_subjects: list[tuple[str, str, str]] = []
     raw_weights: dict[str, list[WeightEntry]] = {}
+    raw_deps: dict[str, list[str]] = {}
 
     for atom in atoms:
         if atom.name == "s_mod" and len(atom.arguments) == 1:
@@ -45,6 +46,11 @@ def _parse_plan(atoms: list[clingo.Symbol], score: int | None = None) -> Plan:
             subject = str(atom.arguments[2]).strip('"')
             raw_subjects.append((course, kind, subject))
 
+        elif atom.name == "dependencia" and len(atom.arguments) == 2:
+            s2 = str(atom.arguments[0]).strip('"')
+            s1 = str(atom.arguments[1]).strip('"')
+            raw_deps.setdefault(s2, []).append(s1)
+
         elif atom.name == "selected_weight" and len(atom.arguments) == 3:
             degree = str(atom.arguments[0]).strip('"')
             subject = str(atom.arguments[1]).strip('"')
@@ -52,7 +58,13 @@ def _parse_plan(atoms: list[clingo.Symbol], score: int | None = None) -> Plan:
             raw_weights.setdefault(subject, []).append(WeightEntry(degree=degree, weight=w))
 
     subjects = [
-        SubjectEntry(course=course, type=kind, subject=subject, weights=raw_weights.get(subject, []))
+        SubjectEntry(
+            course=course,
+            type=kind,
+            subject=subject,
+            weights=raw_weights.get(subject, []),
+            depends_on=raw_deps.get(subject, []) if course == "curso2" else [],
+        )
         for course, kind, subject in raw_subjects
     ]
 

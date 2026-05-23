@@ -32,6 +32,7 @@ class SubjectEntry(BaseModel):
     type: Literal["oblig", "opcion", "optativa"]
     subject: str
     weights: list[WeightEntry] = []
+    depends_on: list[str] = []
 
 
 class Plan(BaseModel):

@@ -1,4 +1,4 @@
-import { DegreeScore, Plan, SubjectEntry } from "../api/client";
+import { DegreeScore, Plan } from "../api/client";
 
 function formatSubject(s: string): string {
   return s.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
@@ -7,6 +7,13 @@ function formatSubject(s: string): string {
 export default function PlanCard({ modality, subjects, degree_scores }: Plan) {
   const byCourse = (course: "curso1" | "curso2") =>
     subjects.filter((s) => s.course === course);
+
+  const prereqFor: Record<string, string[]> = {};
+  for (const s of subjects) {
+    for (const dep of s.depends_on) {
+      (prereqFor[dep] ??= []).push(s.subject);
+    }
+  }
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
@@ -36,6 +43,7 @@ export default function PlanCard({ modality, subjects, degree_scores }: Plan) {
             <div className="space-y-3">
               {byCourse(course).map((s, i) => {
                 const nonZeroWeights = s.weights.filter((w) => w.weight > 0);
+                const neededFor = prereqFor[s.subject] ?? [];
                 return (
                   <div key={i} className="flex flex-col gap-0.5">
                     <span className="text-sm font-semibold text-gray-800">
@@ -56,6 +64,16 @@ export default function PlanCard({ modality, subjects, degree_scores }: Plan) {
                           </span>
                         ))}
                       </div>
+                    )}
+                    {s.depends_on.length > 0 && (
+                      <p className="text-xs text-amber-600">
+                        ← {s.depends_on.map(formatSubject).join(", ")}
+                      </p>
+                    )}
+                    {neededFor.length > 0 && (
+                      <p className="text-xs text-amber-600">
+                        → {neededFor.map(formatSubject).join(", ")}
+                      </p>
                     )}
                   </div>
                 );

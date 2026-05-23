@@ -119,6 +119,38 @@ def test_exclude_subject_respected():
     )
 
 
+def test_dependency_returned_for_subject_with_dep():
+    result = solve(SolveRequest(
+        preferences=[DegreePreference(rank=1, degree="medicina")],
+        constraints=[
+            Constraint(type="force_modality", value="ciencias"),
+            Constraint(type="require_subject", value="matematicas_ii"),
+        ],
+    ))
+    assert result is not None
+    mate2_entries = [
+        s for p in result.plans for s in p.subjects if s.subject == "matematicas_ii"
+    ]
+    assert mate2_entries, "matematicas_ii not found in any plan"
+    assert all("matematicas_i" in s.depends_on for s in mate2_entries)
+
+
+def test_no_dependency_for_subject_without_dep():
+    result = solve(SolveRequest(
+        preferences=[DegreePreference(rank=1, degree="administracion e direccion de empresas")],
+        constraints=[
+            Constraint(type="require_subject", value="empresa_e_deseño_de_modelos_de_negocio"),
+        ],
+    ))
+    assert result is not None
+    empresa_entries = [
+        s for p in result.plans for s in p.subjects
+        if s.subject == "empresa_e_deseño_de_modelos_de_negocio"
+    ]
+    assert empresa_entries, "empresa_e_deseño_de_modelos_de_negocio not found in any plan"
+    assert all(s.depends_on == [] for s in empresa_entries)
+
+
 def test_conflicting_constraints_returns_none():
     result = solve(SolveRequest(
         preferences=[DegreePreference(rank=1, degree="medicina")],
