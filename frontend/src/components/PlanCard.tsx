@@ -89,8 +89,8 @@ export default function PlanCard({ modality, subjects, degree_scores }: Plan) {
               {/* curso2 card */}
               {s2 ? (
                 <div
-                  className="rounded-xl px-3 py-2 flex flex-col gap-1"
-                  style={{ background: s2Color?.bg }}
+                  className="rounded-xl px-3 py-2 flex flex-col gap-1 bg-gray-100 border border-gray-200"
+                  style={{ borderLeftColor: s2Color?.pin, borderLeftWidth: "6px" }}
                 >
                   <span className="text-sm font-semibold text-gray-800">
                     {formatSubject(s2.subject)}
