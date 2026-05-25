@@ -135,15 +135,20 @@ export default function PlanCard({ modality, subjects, degree_scores, open_picks
               {/* curso1 card */}
               {isPinned ? (
                 <div className="rounded-xl px-3 py-2 flex flex-col gap-1 bg-gray-100 border border-gray-200">
-                  <span className="text-sm font-semibold text-gray-800 flex items-center gap-1.5">
-                    <span
-                      className="inline-flex items-center justify-center w-5 h-5 rounded-full shrink-0"
-                      style={{ background: "rgba(255,255,255,0.22)", boxShadow: `0 0 0 1.5px ${pinColors[0]}33` }}
-                    >
-                      <Pin size={13} fill="currentColor" style={{ color: pinColors[0] }} />
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-sm font-semibold text-gray-800">{formatSubject(s1.subject)}</span>
+                    <span className="flex gap-0.5 shrink-0">
+                      {pinColors.map((color, idx) => (
+                        <span
+                          key={idx}
+                          className="inline-flex items-center justify-center w-5 h-5 rounded-full"
+                          style={{ background: "rgba(255,255,255,0.22)", boxShadow: `0 0 0 1.5px ${color}33` }}
+                        >
+                          <Pin size={13} fill="currentColor" style={{ color }} />
+                        </span>
+                      ))}
                     </span>
-                    {formatSubject(s1.subject)}
-                  </span>
+                  </div>
                   {openPicksBySubject[s1.subject] && (
                     <div className="flex gap-1 flex-wrap">
                       {openPicksBySubject[s1.subject].map((t) => <TypeBadge key={t} type={t} />)}
