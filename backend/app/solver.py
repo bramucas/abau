@@ -111,12 +111,14 @@ def _solve_open_picks(
         for model in handle:
             last_atoms = list(model.symbols(atoms=True))
 
-    open_picks: list[OpenPick] = []
+    raw: dict[str, list[str]] = {}
     for atom in last_atoms:
         if atom.name == "open_pick" and len(atom.arguments) == 2:
             subject = str(atom.arguments[0]).strip('"')
             kind = str(atom.arguments[1])
-            open_picks.append(OpenPick(subject=subject, type=kind))
+            raw.setdefault(subject, []).append(kind)
+
+    open_picks = [OpenPick(subject=s, types=t) for s, t in raw.items()]
 
     logger.debug("open_picks for %s: %d", curso2_subjects, len(open_picks))
     return open_picks

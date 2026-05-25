@@ -29,7 +29,7 @@ class DegreeScore(BaseModel):
 
 class OpenPick(BaseModel):
     subject: str
-    type: Literal["oblig", "opcion", "optativa"]
+    types: list[Literal["oblig", "opcion", "optativa"]]
 
 
 class SubjectEntry(BaseModel):

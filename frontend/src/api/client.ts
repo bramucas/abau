@@ -34,7 +34,7 @@ export interface SubjectEntry {
 
 export interface OpenPick {
   subject: string;
-  type: "oblig" | "opcion" | "optativa";
+  types: ("oblig" | "opcion" | "optativa")[];
 }
 
 export interface DegreeScore {
