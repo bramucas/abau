@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Pin } from "lucide-react";
 import { DegreeScore, Plan } from "../api/client";
 
@@ -40,6 +40,18 @@ function formatSubject(s: string): string {
 export default function PlanCard({ modality, subjects, degree_scores, open_picks }: Plan) {
   const [openSlot, setOpenSlot] = useState<number | null>(null);
   const [picks, setPicks] = useState<Record<number, string>>({});
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (openSlot === null) return;
+    const handler = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpenSlot(null);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [openSlot]);
   const byCourse = (course: "curso1" | "curso2") =>
     subjects.filter((s) => s.course === course);
 
@@ -84,7 +96,7 @@ export default function PlanCard({ modality, subjects, degree_scores, open_picks
         ))}
       </div>
 
-      <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+      <div ref={containerRef} className="grid grid-cols-2 gap-x-4 gap-y-2">
         {/* column headers */}
         <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
           1º Bacharelato
