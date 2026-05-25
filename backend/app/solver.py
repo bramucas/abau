@@ -6,6 +6,17 @@ from app.models import Constraint, DegreePreference, DegreeScore, OpenPick, Open
 logger = logging.getLogger(__name__)
 
 MAX_OPTIMAL_MODELS = 5
+_WEIGHT_BASE = 100
+_WEIGHT_DECAY = 0.9
+
+
+def _rank_to_weight(rank: int) -> int:
+    """Convert a 1-based preference rank to an integer optimization weight.
+
+    Rank 1 (most preferred) gets _WEIGHT_BASE; each subsequent rank is
+    _WEIGHT_DECAY times the previous, so preferences are spaced ~10% apart.
+    """
+    return round(_WEIGHT_BASE * (_WEIGHT_DECAY ** (rank - 1)))
 
 
 def _build_instance_lp(
@@ -15,7 +26,7 @@ def _build_instance_lp(
     lines: list[str] = []
 
     for pref in preferences:
-        lines.append(f'orden({pref.rank}, "{pref.degree}").')
+        lines.append(f'orden({_rank_to_weight(pref.rank)}, "{pref.degree}").')
 
     for c in constraints:
         if c.type == "force_modality":
@@ -98,8 +109,8 @@ def _solve_open_picks(
 
     lines: list[str] = []
     for pref in preferences:
-        lines.append(f'orden({pref.rank}, "{pref.degree}").')
-    lines.append(f':- not s_mod("{modality}").')
+        lines.append(f'orden({_rank_to_weight(pref.rank)}, "{pref.degree}").')
+    lines.append(f':- not s_mod("{modality}").') 
     for subj in curso2_subjects:
         lines.append(f':- not s(curso2, "{subj}").')
     for subj in curso1_fixed:
