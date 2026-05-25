@@ -114,22 +114,24 @@ export default function PlanCard({ modality, subjects, degree_scores, open_picks
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-      <div className="flex flex-wrap items-center gap-3 mb-5">
-        <span className="px-3 py-1 bg-indigo-100 text-indigo-800 text-sm font-semibold rounded-full capitalize">
-          {modality}
-        </span>
-        {degree_scores.map((ds: DegreeScore) => {
-          const dc = degreeColorMap[ds.degree];
-          return (
-            <span
-              key={ds.degree}
-              className="text-xs px-2 py-0.5 rounded-full font-semibold capitalize"
-              style={{ background: dc?.bg ?? "#f3f4f6", color: dc?.text ?? "#374151" }}
-            >
-              {ds.degree} · {ds.max_score}/14
-            </span>
-          );
-        })}
+      <div className="mb-5">
+        <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-0.5">Modalidade</p>
+        <p className="text-xl font-bold text-indigo-900 capitalize mb-3">{modality}</p>
+        <div className="flex flex-wrap gap-1.5">
+          {degree_scores.map((ds: DegreeScore) => {
+            const dc = degreeColorMap[ds.degree];
+            return (
+              <span
+                key={ds.degree}
+                className="text-xs px-2.5 py-1 rounded-lg font-semibold capitalize flex items-center gap-1.5"
+                style={{ background: dc?.bg ?? "#f3f4f6", color: dc?.text ?? "#374151" }}
+              >
+                {ds.degree}
+                <span className="font-bold opacity-60">{ds.max_score}/14</span>
+              </span>
+            );
+          })}
+        </div>
       </div>
 
       <div ref={containerRef} className="grid grid-cols-2 gap-x-4 gap-y-2">
