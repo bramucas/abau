@@ -2,6 +2,15 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { Pin } from "lucide-react";
 import { DegreePreference, DegreeScore, OpenPick, Plan, postOpenPicks } from "../api/client";
 
+// Pastel colors for degree badges — bg/bgStrong/text
+const DEGREE_COLORS = [
+  { bg: "#e0f2fe", bgStrong: "#bae6fd", text: "#0369a1" }, // sky
+  { bg: "#ffe4e6", bgStrong: "#fecdd3", text: "#be185d" }, // rose
+  { bg: "#ffedd5", bgStrong: "#fed7aa", text: "#c2410c" }, // orange
+  { bg: "#ccfbf1", bgStrong: "#99f6e4", text: "#0f766e" }, // teal
+  { bg: "#f7fee7", bgStrong: "#ecfccb", text: "#4d7c0f" }, // lime
+];
+
 // bg: Tailwind *-300 (card background)  pin: Tailwind *-700 (icon, high contrast)
 const SUBJECT_COLORS = [
   { bg: "#fca5a5", pin: "#b91c1c" }, // red
@@ -78,6 +87,12 @@ export default function PlanCard({ modality, subjects, degree_scores, open_picks
     }
   }
 
+  // Degree color map: assigned in preferences order
+  const degreeColorMap: Record<string, typeof DEGREE_COLORS[0]> = {};
+  preferences.forEach((p, i) => {
+    degreeColorMap[p.degree] = DEGREE_COLORS[i % DEGREE_COLORS.length];
+  });
+
   // All fixed (pinned) subject names — excluded from the selectable dropdown
   const pinnedSubjects = new Set(
     subjects.filter((s) => s.course === "curso1" && (s1PinsMap[s.subject]?.length ?? 0) > 0).map((s) => s.subject)
@@ -103,12 +118,18 @@ export default function PlanCard({ modality, subjects, degree_scores, open_picks
         <span className="px-3 py-1 bg-indigo-100 text-indigo-800 text-sm font-semibold rounded-full capitalize">
           {modality}
         </span>
-        {degree_scores.map((ds: DegreeScore) => (
-          <span key={ds.degree} className="flex items-center gap-1.5 text-xs text-gray-500">
-            <span className="capitalize">{ds.degree}</span>
-            <span className="font-bold text-indigo-700">{ds.max_score}/14</span>
-          </span>
-        ))}
+        {degree_scores.map((ds: DegreeScore) => {
+          const dc = degreeColorMap[ds.degree];
+          return (
+            <span
+              key={ds.degree}
+              className="text-xs px-2 py-0.5 rounded-full font-semibold capitalize"
+              style={{ background: dc?.bg ?? "#f3f4f6", color: dc?.text ?? "#374151" }}
+            >
+              {ds.degree} · {ds.max_score}/14
+            </span>
+          );
+        })}
       </div>
 
       <div ref={containerRef} className="grid grid-cols-2 gap-x-4 gap-y-2">
@@ -218,18 +239,23 @@ export default function PlanCard({ modality, subjects, degree_scores, open_picks
                   </span>
                   {nonZeroWeights.length > 0 && (
                     <div className="flex flex-wrap gap-1">
-                      {nonZeroWeights.map((w) => (
-                        <span
-                          key={w.degree}
-                          className={`text-xs px-1.5 py-0.5 rounded font-semibold ${
-                            w.weight === 2
-                              ? "bg-violet-100 text-violet-700"
-                              : "bg-orange-100 text-orange-700"
-                          }`}
-                        >
-                          {w.degree} ×{w.weight}
-                        </span>
-                      ))}
+                      {nonZeroWeights.map((w) => {
+                        const dc = degreeColorMap[w.degree];
+                        const isDouble = w.weight === 2;
+                        return (
+                          <span
+                            key={w.degree}
+                            className="text-xs px-1.5 py-0.5 rounded font-semibold capitalize"
+                            style={{
+                              background: isDouble ? (dc?.bgStrong ?? "#e5e7eb") : (dc?.bg ?? "#f3f4f6"),
+                              color: dc?.text ?? "#374151",
+                              boxShadow: isDouble ? `inset 0 0 0 1.5px ${dc?.text ?? "#374151"}44` : undefined,
+                            }}
+                          >
+                            {w.degree} ×{w.weight}
+                          </span>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
