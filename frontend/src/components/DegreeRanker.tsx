@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, ChevronUp, Search, X } from "lucide-react";
+import { ChevronDown, ChevronUp, GripVertical, Search, X } from "lucide-react";
 
 interface Props {
   degrees: string[];
@@ -12,6 +12,8 @@ const MAX_DEGREES = 5;
 export default function DegreeRanker({ degrees, selected, onChange }: Props) {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -95,8 +97,25 @@ export default function DegreeRanker({ degrees, selected, onChange }: Props) {
           {selected.map((d, i) => (
             <div
               key={d}
-              className="flex items-center gap-3 px-3 py-2.5 bg-gray-50 rounded-lg border border-gray-100"
+              draggable
+              onDragStart={() => setDragIndex(i)}
+              onDragOver={(e) => { e.preventDefault(); setDragOverIndex(i); }}
+              onDrop={() => {
+                if (dragIndex === null || dragIndex === i) return;
+                const arr = [...selected];
+                arr.splice(i, 0, arr.splice(dragIndex, 1)[0]);
+                onChange(arr);
+                setDragIndex(null);
+                setDragOverIndex(null);
+              }}
+              onDragEnd={() => { setDragIndex(null); setDragOverIndex(null); }}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg border transition-colors ${
+                dragOverIndex === i && dragIndex !== i
+                  ? "bg-indigo-50 border-indigo-300"
+                  : "bg-gray-50 border-gray-100"
+              } ${dragIndex === i ? "opacity-40" : "opacity-100"}`}
             >
+              <GripVertical size={14} className="text-gray-300 shrink-0 cursor-grab active:cursor-grabbing" />
               <span className="w-6 h-6 flex items-center justify-center bg-indigo-100 text-indigo-700 text-xs font-bold rounded-full shrink-0">
                 {i + 1}
               </span>
