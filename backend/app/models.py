@@ -27,6 +27,11 @@ class DegreeScore(BaseModel):
     max_score: float
 
 
+class OpenPick(BaseModel):
+    subject: str
+    type: Literal["oblig", "opcion", "optativa"]
+
+
 class SubjectEntry(BaseModel):
     course: Literal["curso1", "curso2"]
     type: Literal["oblig", "opcion", "optativa"]
@@ -40,6 +45,7 @@ class Plan(BaseModel):
     subjects: list[SubjectEntry]
     score: int | None = None
     degree_scores: list[DegreeScore] = []
+    open_picks: list[OpenPick] = []
 
 
 class SolveResponse(BaseModel):

@@ -1,7 +1,7 @@
 import logging
 import clingo
 from app.config import settings
-from app.models import Constraint, DegreePreference, DegreeScore, Plan, SolveRequest, SolveResponse, SubjectEntry, WeightEntry
+from app.models import Constraint, DegreePreference, DegreeScore, OpenPick, Plan, SolveRequest, SolveResponse, SubjectEntry, WeightEntry
 
 logger = logging.getLogger(__name__)
 
@@ -85,6 +85,43 @@ def _parse_plan(atoms: list[clingo.Symbol], score: int | None = None) -> Plan:
     return Plan(modality=modality, subjects=subjects, score=score, degree_scores=degree_scores)
 
 
+def _solve_open_picks(
+    preferences: list[DegreePreference],
+    modality: str,
+    curso2_subjects: list[str],
+) -> list[OpenPick]:
+    asp_dir = settings.asp_dir
+
+    ctl = clingo.Control(["--enum-mode=brave", "--models=0"])
+    ctl.load(str(asp_dir / "abau_find_brave_cons.lp"))
+
+    lines: list[str] = []
+    for pref in preferences:
+        lines.append(f'orden({pref.rank}, "{pref.degree}").')
+    lines.append(f':- not s_mod("{modality}").')
+    for subj in curso2_subjects:
+        lines.append(f':- not s(curso2, "{subj}").')
+
+    ctl.add("base", [], "\n".join(lines))
+    ctl.ground([("base", [])])
+
+    # In brave mode the final model IS the complete brave consequence set.
+    last_atoms: list[clingo.Symbol] = []
+    with ctl.solve(yield_=True) as handle:
+        for model in handle:
+            last_atoms = list(model.symbols(atoms=True))
+
+    open_picks: list[OpenPick] = []
+    for atom in last_atoms:
+        if atom.name == "open_pick" and len(atom.arguments) == 2:
+            subject = str(atom.arguments[0]).strip('"')
+            kind = str(atom.arguments[1])
+            open_picks.append(OpenPick(subject=subject, type=kind))
+
+    logger.debug("open_picks for %s: %d", curso2_subjects, len(open_picks))
+    return open_picks
+
+
 def solve(request: SolveRequest) -> SolveResponse | None:
     asp_dir = settings.asp_dir
 
@@ -114,5 +151,9 @@ def solve(request: SolveRequest) -> SolveResponse | None:
         _parse_plan(atoms, score=(-cost[0]) if cost else None)
         for cost, atoms in optimal_plans
     ]
+
+    for plan in plans:
+        curso2_subjects = [s.subject for s in plan.subjects if s.course == "curso2"]
+        plan.open_picks = _solve_open_picks(request.preferences, plan.modality, curso2_subjects)
 
     return SolveResponse(plans=plans)

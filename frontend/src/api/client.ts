@@ -32,6 +32,11 @@ export interface SubjectEntry {
   depends_on: string[];
 }
 
+export interface OpenPick {
+  subject: string;
+  type: "oblig" | "opcion" | "optativa";
+}
+
 export interface DegreeScore {
   degree: string;
   max_score: number;
@@ -42,6 +47,7 @@ export interface Plan {
   subjects: SubjectEntry[];
   score: number | null;
   degree_scores: DegreeScore[];
+  open_picks: OpenPick[];
 }
 
 export interface SolveResponse {
