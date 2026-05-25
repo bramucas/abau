@@ -9,8 +9,8 @@ def test_build_encodes_preferences():
         [DegreePreference(rank=1, degree="medicina"), DegreePreference(rank=2, degree="psicoloxia")],
         [],
     )
-    assert 'orden(1, "medicina").' in lp
-    assert 'orden(2, "psicoloxia").' in lp
+    assert 'importancia(100, "medicina").' in lp
+    assert 'importancia(90, "psicoloxia").' in lp
 
 
 def test_build_force_modality():
@@ -57,13 +57,13 @@ def test_build_multiple_constraints():
     assert ':- s(_, "fisica").' in lp
 
 
-def test_build_no_constraints_produces_only_orden():
+def test_build_no_constraints_produces_only_importancia():
     lp = _build_instance_lp(
         [DegreePreference(rank=1, degree="medicina")],
         [],
     )
     assert ":-" not in lp
-    assert 'orden(1, "medicina").' in lp
+    assert 'importancia(100, "medicina").' in lp
 
 
 # ── solver integration tests ───────────────────────────────────────────────────

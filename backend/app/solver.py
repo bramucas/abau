@@ -26,7 +26,7 @@ def _build_instance_lp(
     lines: list[str] = []
 
     for pref in preferences:
-        lines.append(f'orden({_rank_to_weight(pref.rank)}, "{pref.degree}").')
+        lines.append(f'importancia({_rank_to_weight(pref.rank)}, "{pref.degree}").')
 
     for c in constraints:
         if c.type == "force_modality":
@@ -109,7 +109,7 @@ def _solve_open_picks(
 
     lines: list[str] = []
     for pref in preferences:
-        lines.append(f'orden({_rank_to_weight(pref.rank)}, "{pref.degree}").')
+        lines.append(f'importancia({_rank_to_weight(pref.rank)}, "{pref.degree}").')
     lines.append(f':- not s_mod("{modality}").') 
     for subj in curso2_subjects:
         lines.append(f':- not s(curso2, "{subj}").')

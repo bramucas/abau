@@ -7,8 +7,8 @@
 
 % Needs some input to work with
 % For example, a degree and 2bach subjects
-% orden(1, "administracion e direccion de empresas").
-% orden(2, "arquitectura tecnica").
+% importancia(1, "administracion e direccion de empresas").
+% importancia(2, "arquitectura tecnica").
 
 % :- not s(curso2, "quimica").
 % :- not s(curso2, "matematicas_ii").
