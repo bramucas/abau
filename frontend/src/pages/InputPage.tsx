@@ -59,7 +59,7 @@ export default function InputPage({ selected, onSelectedChange, constraints, onC
             abau
           </h1>
           <p className="text-gray-500 text-sm">
-            Elixe as túas materias de Bacharelato para acadar a carreira que
+            Optimiza as túas materias de Bacharelato para acadar a carreira que
             desexas
           </p>
         </div>
