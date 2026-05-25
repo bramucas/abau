@@ -13,15 +13,17 @@ import ConstraintPanel from "../components/ConstraintPanel";
 import DegreeRanker from "../components/DegreeRanker";
 
 interface Props {
+  selected: string[];
+  onSelectedChange: (v: string[]) => void;
+  constraints: Constraint[];
+  onConstraintsChange: (v: Constraint[]) => void;
   onSolve: (preferences: DegreePreference[], response: SolveResponse) => void;
 }
 
-export default function InputPage({ onSolve }: Props) {
+export default function InputPage({ selected, onSelectedChange, constraints, onConstraintsChange, onSolve }: Props) {
   const [degrees, setDegrees] = useState<string[]>([]);
   const [modalities, setModalities] = useState<string[]>([]);
   const [subjects, setSubjects] = useState<SubjectOption[]>([]);
-  const [selected, setSelected] = useState<string[]>([]);
-  const [constraints, setConstraints] = useState<Constraint[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -69,7 +71,7 @@ export default function InputPage({ onSolve }: Props) {
           <DegreeRanker
             degrees={degrees}
             selected={selected}
-            onChange={setSelected}
+            onChange={onSelectedChange}
           />
         </div>
 
@@ -78,7 +80,7 @@ export default function InputPage({ onSolve }: Props) {
             modalities={modalities}
             subjects={subjects}
             constraints={constraints}
-            onChange={setConstraints}
+            onChange={onConstraintsChange}
           />
         </div>
 
