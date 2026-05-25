@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useRef, useState } from "react";
-import { Pin } from "lucide-react";
+import { Pin, X } from "lucide-react";
 import { DegreePreference, DegreeScore, OpenPick, Plan, postOpenPicks } from "../api/client";
 
 // Pastel colors for degree badges — bg/bgStrong/text
@@ -193,9 +193,9 @@ export default function PlanCard({ modality, subjects, degree_scores, open_picks
                         <div className="flex items-center justify-between gap-2">
                           <span className="text-sm font-semibold text-gray-800">{formatSubject(selected)}</span>
                           <button
-                            className="text-gray-400 hover:text-gray-600 text-xs shrink-0"
+                            className="p-0.5 rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-200 transition-colors shrink-0"
                             onClick={(e) => { e.stopPropagation(); const np = { ...picks, [i]: "" }; setPicks(np); setOpenSlot(null); refreshOpenPicks(np); }}
-                          >✕</button>
+                          ><X size={14} strokeWidth={2.5} /></button>
                         </div>
                         {openPicksBySubject[selected] && (
                           <div className="flex gap-1 flex-wrap">
