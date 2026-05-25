@@ -50,3 +50,14 @@ class Plan(BaseModel):
 
 class SolveResponse(BaseModel):
     plans: list[Plan]
+
+
+class OpenPicksRequest(BaseModel):
+    preferences: list[DegreePreference]
+    modality: str
+    curso2_subjects: list[str]
+    curso1_fixed: list[str] = []
+
+
+class OpenPicksResponse(BaseModel):
+    open_picks: list[OpenPick]

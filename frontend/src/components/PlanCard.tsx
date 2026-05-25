@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import { Pin } from "lucide-react";
-import { DegreeScore, Plan } from "../api/client";
+import { DegreePreference, DegreeScore, OpenPick, Plan, postOpenPicks } from "../api/client";
 
 // bg: Tailwind *-300 (card background)  pin: Tailwind *-700 (icon, high contrast)
 const SUBJECT_COLORS = [
@@ -37,9 +37,10 @@ function formatSubject(s: string): string {
   return s.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-export default function PlanCard({ modality, subjects, degree_scores, open_picks }: Plan) {
+export default function PlanCard({ modality, subjects, degree_scores, open_picks, preferences }: Plan & { preferences: DegreePreference[] }) {
   const [openSlot, setOpenSlot] = useState<number | null>(null);
   const [picks, setPicks] = useState<Record<number, string>>({});
+  const [localOpenPicks, setLocalOpenPicks] = useState<OpenPick[]>(open_picks);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -63,7 +64,7 @@ export default function PlanCard({ modality, subjects, degree_scores, open_picks
 
   // Lookup: subject → types from open_picks
   const openPicksBySubject: Record<string, string[]> = Object.fromEntries(
-    open_picks.map((p) => [p.subject, p.types])
+    localOpenPicks.map((p) => [p.subject, p.types])
   );
 
   // Reverse: curso1 subject → pin colors of all curso2 subjects that depend on it
@@ -81,6 +82,20 @@ export default function PlanCard({ modality, subjects, degree_scores, open_picks
   const pinnedSubjects = new Set(
     subjects.filter((s) => s.course === "curso1" && (s1PinsMap[s.subject]?.length ?? 0) > 0).map((s) => s.subject)
   );
+
+  const refreshOpenPicks = async (newPicks: Record<number, string>) => {
+    const curso2_subjects = subjects.filter((s) => s.course === "curso2").map((s) => s.subject);
+    const curso1_fixed = [
+      ...Array.from(pinnedSubjects),
+      ...Object.values(newPicks).filter(Boolean),
+    ];
+    try {
+      const res = await postOpenPicks({ preferences, modality, curso2_subjects, curso1_fixed });
+      setLocalOpenPicks(res.open_picks);
+    } catch {
+      // keep previous open_picks on error
+    }
+  };
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
@@ -151,7 +166,7 @@ export default function PlanCard({ modality, subjects, degree_scores, open_picks
                           <span className="text-sm font-semibold text-gray-800">{formatSubject(selected)}</span>
                           <button
                             className="text-gray-400 hover:text-gray-600 text-xs shrink-0"
-                            onClick={(e) => { e.stopPropagation(); setPicks({ ...picks, [i]: "" }); setOpenSlot(null); }}
+                            onClick={(e) => { e.stopPropagation(); const np = { ...picks, [i]: "" }; setPicks(np); setOpenSlot(null); refreshOpenPicks(np); }}
                           >✕</button>
                         </div>
                         {openPicksBySubject[selected] && (
@@ -166,7 +181,7 @@ export default function PlanCard({ modality, subjects, degree_scores, open_picks
                   </div>
                   {openSlot === i && (
                     <div className="absolute top-full left-0 right-0 z-20 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-52 overflow-y-auto">
-                      {open_picks.filter((pick) => {
+                      {localOpenPicks.filter((pick) => {
                         if (pinnedSubjects.has(pick.subject)) return false;
                         const otherPicks = Object.entries(picks).filter(([k]) => Number(k) !== i).map(([, v]) => v);
                         return !otherPicks.includes(pick.subject);
@@ -174,7 +189,7 @@ export default function PlanCard({ modality, subjects, degree_scores, open_picks
                         <button
                           key={pick.subject}
                           className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 flex items-center justify-between gap-2"
-                          onClick={() => { setPicks({ ...picks, [i]: pick.subject }); setOpenSlot(null); }}
+                          onClick={() => { const np = { ...picks, [i]: pick.subject }; setPicks(np); setOpenSlot(null); refreshOpenPicks(np); }}
                         >
                           <span>{formatSubject(pick.subject)}</span>
                           <span className="flex gap-1 shrink-0">

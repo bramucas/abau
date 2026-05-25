@@ -88,3 +88,20 @@ export const postSolve = (req: SolveRequest) =>
     method: "POST",
     body: JSON.stringify(req),
   });
+
+export interface OpenPicksRequest {
+  preferences: DegreePreference[];
+  modality: string;
+  curso2_subjects: string[];
+  curso1_fixed: string[];
+}
+
+export interface OpenPicksResponse {
+  open_picks: OpenPick[];
+}
+
+export const postOpenPicks = (req: OpenPicksRequest) =>
+  apiFetch<OpenPicksResponse>("/api/open-picks/", {
+    method: "POST",
+    body: JSON.stringify(req),
+  });

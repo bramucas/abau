@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   Constraint,
+  DegreePreference,
   fetchDegrees,
   fetchModalities,
   fetchSubjects,
@@ -12,7 +13,7 @@ import ConstraintPanel from "../components/ConstraintPanel";
 import DegreeRanker from "../components/DegreeRanker";
 
 interface Props {
-  onSolve: (response: SolveResponse) => void;
+  onSolve: (preferences: DegreePreference[], response: SolveResponse) => void;
 }
 
 export default function InputPage({ onSolve }: Props) {
@@ -40,7 +41,7 @@ export default function InputPage({ onSolve }: Props) {
         degree,
       }));
       const response = await postSolve({ preferences, constraints });
-      onSolve(response);
+      onSolve(preferences, response);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erro descoñecido");
     } finally {

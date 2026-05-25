@@ -1,7 +1,7 @@
 import logging
 import clingo
 from app.config import settings
-from app.models import Constraint, DegreePreference, DegreeScore, OpenPick, Plan, SolveRequest, SolveResponse, SubjectEntry, WeightEntry
+from app.models import Constraint, DegreePreference, DegreeScore, OpenPick, OpenPicksRequest, OpenPicksResponse, Plan, SolveRequest, SolveResponse, SubjectEntry, WeightEntry
 
 logger = logging.getLogger(__name__)
 
@@ -89,6 +89,7 @@ def _solve_open_picks(
     preferences: list[DegreePreference],
     modality: str,
     curso2_subjects: list[str],
+    curso1_fixed: list[str] = [],
 ) -> list[OpenPick]:
     asp_dir = settings.asp_dir
 
@@ -101,6 +102,8 @@ def _solve_open_picks(
     lines.append(f':- not s_mod("{modality}").')
     for subj in curso2_subjects:
         lines.append(f':- not s(curso2, "{subj}").')
+    for subj in curso1_fixed:
+        lines.append(f':- not s(curso1, "{subj}").')
 
     ctl.add("base", [], "\n".join(lines))
     ctl.ground([("base", [])])
@@ -159,3 +162,13 @@ def solve(request: SolveRequest) -> SolveResponse | None:
         plan.open_picks = _solve_open_picks(request.preferences, plan.modality, curso2_subjects)
 
     return SolveResponse(plans=plans)
+
+
+def solve_open_picks(request: OpenPicksRequest) -> OpenPicksResponse:
+    picks = _solve_open_picks(
+        request.preferences,
+        request.modality,
+        request.curso2_subjects,
+        request.curso1_fixed,
+    )
+    return OpenPicksResponse(open_picks=picks)
