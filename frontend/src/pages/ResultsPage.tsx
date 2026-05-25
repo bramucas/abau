@@ -52,7 +52,7 @@ export default function ResultsPage({ response, onBack }: Props) {
           </div>
         )}
 
-        <PlanCard {...plans[active]} />
+        <PlanCard key={active} {...plans[active]} />
       </div>
     </div>
   );
