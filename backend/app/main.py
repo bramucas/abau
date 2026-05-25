@@ -2,7 +2,7 @@ import logging
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import degrees, subjects, solve
+from app.routers import degrees, subjects, solve, open_picks
 
 logging.basicConfig(
     level=getattr(logging, os.getenv("LOG_LEVEL", "INFO").upper(), logging.INFO),
@@ -25,6 +25,7 @@ app.add_middleware(
 app.include_router(degrees.router, prefix="/api")
 app.include_router(subjects.router, prefix="/api")
 app.include_router(solve.router, prefix="/api")
+app.include_router(open_picks.router, prefix="/api")
 
 
 @app.get("/health")

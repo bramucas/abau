@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
-import { SolveResponse } from "../api/client";
+import { DegreePreference, SolveResponse } from "../api/client";
 import PlanCard from "../components/PlanCard";
 
 interface Props {
   response: SolveResponse;
+  preferences: DegreePreference[];
   onBack: () => void;
 }
 
-export default function ResultsPage({ response, onBack }: Props) {
+export default function ResultsPage({ response, preferences, onBack }: Props) {
   const [active, setActive] = useState(0);
   const { plans } = response;
 
@@ -52,7 +53,11 @@ export default function ResultsPage({ response, onBack }: Props) {
           </div>
         )}
 
-        <PlanCard {...plans[active]} />
+        {plans.map((plan, i) => (
+          <div key={i} style={{ display: i === active ? "block" : "none" }}>
+            <PlanCard {...plan} preferences={preferences} />
+          </div>
+        ))}
       </div>
     </div>
   );

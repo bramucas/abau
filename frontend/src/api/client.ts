@@ -29,6 +29,12 @@ export interface SubjectEntry {
   type: "oblig" | "opcion" | "optativa";
   subject: string;
   weights: WeightEntry[];
+  depends_on: string[];
+}
+
+export interface OpenPick {
+  subject: string;
+  types: ("oblig" | "opcion" | "optativa")[];
 }
 
 export interface DegreeScore {
@@ -41,6 +47,7 @@ export interface Plan {
   subjects: SubjectEntry[];
   score: number | null;
   degree_scores: DegreeScore[];
+  open_picks: OpenPick[];
 }
 
 export interface SolveResponse {
@@ -78,6 +85,23 @@ export const fetchSubjects = () =>
 
 export const postSolve = (req: SolveRequest) =>
   apiFetch<SolveResponse>("/api/solve/", {
+    method: "POST",
+    body: JSON.stringify(req),
+  });
+
+export interface OpenPicksRequest {
+  preferences: DegreePreference[];
+  modality: string;
+  curso2_subjects: string[];
+  curso1_fixed: string[];
+}
+
+export interface OpenPicksResponse {
+  open_picks: OpenPick[];
+}
+
+export const postOpenPicks = (req: OpenPicksRequest) =>
+  apiFetch<OpenPicksResponse>("/api/open-picks/", {
     method: "POST",
     body: JSON.stringify(req),
   });
