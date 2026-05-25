@@ -53,7 +53,11 @@ export default function ResultsPage({ response, preferences, onBack }: Props) {
           </div>
         )}
 
-        <PlanCard key={active} {...plans[active]} preferences={preferences} />
+        {plans.map((plan, i) => (
+          <div key={i} style={{ display: i === active ? "block" : "none" }}>
+            <PlanCard {...plan} preferences={preferences} />
+          </div>
+        ))}
       </div>
     </div>
   );
