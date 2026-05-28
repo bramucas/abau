@@ -1,0 +1,24 @@
+services:
+  backend:
+    build: ./backend
+    environment:
+      ABAU_ASP_DIR: /abau_proj
+    volumes:
+      # Mount the ASP source files as read-only so .lp changes don't require a rebuild
+      - ./abau_proj:/abau_proj:ro
+    networks:
+      - abau-net
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - abau-net
+
+networks:
+  abau-net:
+    driver: bridge
+    # Will create a DNS entry "backend" for the service
