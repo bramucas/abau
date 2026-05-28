@@ -3,6 +3,7 @@ services:
     build: ./backend
     environment:
       ABAU_ASP_DIR: /abau_proj
+      LOG_LEVEL: DEBUG
     volumes:
       # Mount the ASP source files as read-only so .lp changes don't require a rebuild
       - ./abau_proj:/abau_proj:ro
